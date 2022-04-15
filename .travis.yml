@@ -1,0 +1,29 @@
+language: java
+jdk: oraclejdk8
+
+env:
+  - ANDROID_HOME="$HOME/.androidsdk"
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $ANDROID_HOME
+
+before_install:
+  # cache will create an empty directory when there is no sdk cached.
+  # android-sdk won't download sdk manager when there is a directory
+  - if ! [ "$(ls -A $ANDROID_HOME)" ]; then rm -r $ANDROID_HOME; fi
+
+install:
+  - ./gradlew clean core:compileJava desktop:compileJava mobile:compileReleaseSources
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+addons:
+  apt:
+    packages:
+    - libstdc++6:i386
+    - lib32z1
+    - expect
